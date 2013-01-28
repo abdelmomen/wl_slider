@@ -1,5 +1,6 @@
 <?php
 
+// TODO WORK WITH INI
 if(get_bloginfo( 'language' )=='ar')
 {
     define('CPT_NAME', "عرض الشرائح");
@@ -67,6 +68,7 @@ function add_custom_taxonomies() {
 add_action( 'init', 'add_custom_taxonomies', 0 );
 
 // Add the Meta Box
+// tutorial http://wp.tutsplus.com/tutorials/plugins/how-to-create-custom-wordpress-writemeta-boxes/
 function cd_meta_box_add()
 {
     add_meta_box( 'my-meta-box-id',
@@ -79,20 +81,26 @@ function cd_meta_box_add()
 }
 add_action( 'add_meta_boxes', 'cd_meta_box_add' );
 
-function cd_meta_box_cb( $post )
-{
+function cd_meta_box_cb( $post ){
+	
     $values = get_post_custom( $post->ID );
 
-    $text = isset( $values['my_meta_box_text'] ) ? esc_attr( $values['my_meta_box_text'][0] ) : '';
+    $url = isset( $values['my_meta_box_url'] ) ? esc_attr( $values['my_meta_box_url'][0] ) : '';
 
+    /*
     $selected = isset( $values['my_meta_box_select'] ) ? esc_attr( $values['my_meta_box_select'][0] ) : '';
-
     $check = isset( $values['my_meta_box_check'] ) ? esc_attr( $values['my_meta_box_check'][0] ) : '';
-
+	*/
+    
     wp_nonce_field( 'my_meta_box_nonce', 'meta_box_nonce' );
-
-    include("wblp-fields-tpl.php");
-}
+    ?>
+    <p>
+	    <label for="my_meta_box_text">Slide URL</label>
+	    <input type="text" name="my_meta_box_url" id="my_meta_box_url" value="<?php echo $url; ?>" />
+	</p>
+    <?php 
+    
+}// End cd_meta_box_cb
 
 function cd_meta_box_save( $post_id )
 {
@@ -113,15 +121,16 @@ function cd_meta_box_save( $post_id )
     );
     
     // Probably a good idea to make sure your data is set
-    if( isset( $_POST['my_meta_box_text'] ))
-        update_post_meta( $post_id, 'my_meta_box_text', wp_kses( $_POST['my_meta_box_text'], $allowed ) );
-        
+    if( isset( $_POST['my_meta_box_url'] ))
+        update_post_meta( $post_id, 'my_meta_box_url', wp_kses( $_POST['my_meta_box_url'], $allowed ) );
+    /*
     if( isset( $_POST['my_meta_box_select'] ))
         update_post_meta( $post_id, 'my_meta_box_select', esc_attr( $_POST['my_meta_box_select'] ) );
         
     // This is purely my personal preference for saving checkboxes
     $chk = ( isset( $_POST['my_meta_box_check'] ) && $_POST['my_meta_box_check'] ) ? 'on' : 'off';
         update_post_meta( $post_id, 'my_meta_box_check', $chk );
+    */
 }
 
 add_action( 'save_post', 'cd_meta_box_save' );

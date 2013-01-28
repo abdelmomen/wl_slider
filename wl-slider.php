@@ -93,9 +93,27 @@ function wl_slider($width=null,$height=null,$txm=''){
 
     if (have_posts()) : 
         while (have_posts()) : the_post();  
-
-        $img= get_the_post_thumbnail();// Null to get the width as it uploaded
-        $slider.='<li>'.$img.'</li>';  
+	    
+    	$values = get_post_custom(get_the_ID());
+    	
+   		$url = isset( $values['my_meta_box_url'] ) ? esc_attr( $values['my_meta_box_url'][0] ) : '';
+   		
+   		$args=array(
+        	'alt'=>get_the_title(),
+       		'title'=>get_the_title(),
+        );
+        
+        $slider.= '<li>';
+        if(!empty($url))
+        	$slider.= '<a href="'.$url.'">';
+        // Now add the image
+        $slider.=get_the_post_thumbnail(null,null,$args);// the Null to get the width as it uploaded
+        
+        if(!empty($url))
+        	$slider.= '</a>';
+        	
+        $slider.= '</li>';
+        
         endwhile; 
     endif; 
     wp_reset_query();
