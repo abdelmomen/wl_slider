@@ -1,4 +1,4 @@
 wl_slider
 =========
 
-wordpress slider plugin
+wordpress slider plugin ( Final in askabdo )
